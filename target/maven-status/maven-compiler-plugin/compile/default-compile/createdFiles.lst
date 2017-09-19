@@ -1,0 +1,3 @@
+org/forgerock/openam/auth/nodes/HaveIBeenPwnedNodePlugin.class
+org/forgerock/openam/auth/nodes/HaveIBeenPwnedNode$Config.class
+org/forgerock/openam/auth/nodes/HaveIBeenPwnedNode.class
