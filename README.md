@@ -15,31 +15,25 @@
 -->
 <b>Have I Been Pwned Authentication Node</b>
 <br/>
-An authentication decision node which checks a user's email address against the list of known public security breaches as recorded at HaveIBeenPwned (http://haveibeenpwned.com). If the user's email address is associated with a known breach, the authentication node returns true, otherwise false.
-<br/>
-<br/>
-<b>Installation</b>
-<br/>
+A simple authentication node for ForgeRock's [Identity Platform][forgerock_platform] 5.5 and above. This node checks a user's email address against the list of known public security breaches as recorded at HaveIBeenPwned (http://haveibeenpwned.com). If the user's email address is associated with a known breach, the authentication node returns true, otherwise false.
+## Installation
+
 Copy the .jar file from the ../target directory into the ../web-container/webapps/openam/WEB-INF/lib directory where AM is deployed.  Restart the web container to pick up the new node.  The node will then appear in the authentication trees components palette.
-<br/>
-<br/>
-<b>Usage</b>
-<br/>
+## Usage
+
 The node provides 2 outcomes: true, indicating an email address associated with a known breach, or false, indicating that no known breaches.
-<br/>
-<br/>
-<b>To Build</b>
-<br/>
-Edit the necessary HaveIBeenPwned.java as appropriate.  To rebuild, run "mvn clean install" in the directory containing the pom.xml
-<br/>
-<br/>
-<br/>
-![ScreenShot](./haveibeenpwned.png)
-<br/>
-<br/>
-<b>Disclaimer</b>
+## To Build
+The code in this repository has binary dependencies that live in the ForgeRock maven repository. Maven can be configured to authenticate to this repository by following the following [ForgeRock Knowledge Base Article](https://backstage.forgerock.com/knowledge/kb/article/a74096897).
+
+Edit the necessary HaveIBeenPwned.java as appropriate.  To rebuild, run "mvn clean install" in the directory containing the pom.xml  
+
+![ScreenShot](./haveibeenpwned.png)  
+
+## Disclaimer
 The sample code described herein is provided on an "as is" basis, without warranty of any kind, to the fullest extent permitted by law. ForgeRock does not warrant or guarantee the individual success developers may have in implementing the sample code on their development platforms or in production configurations.
 
 ForgeRock does not warrant, guarantee or make any representations regarding the use, results of use, accuracy, timeliness or completeness of any data or information relating to the sample code. ForgeRock disclaims all warranties, expressed or implied, and in particular, disclaims all warranties of merchantability, and warranties related to the code, or any service or software related thereto.
 
 ForgeRock shall not be liable for any direct, indirect or consequential damages or costs of any type arising out of any action taken by you or others related to the sample code.
+
+[forgerock_platform]: https://www.forgerock.com/platform/
