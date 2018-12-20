@@ -51,7 +51,7 @@ import java.net.URL;
         configClass = HaveIBeenPwnedNode.Config.class)
 public class HaveIBeenPwnedNode extends AbstractDecisionNode {
 
-    interface Config {
+    public interface Config {
     }
 
     private final Config config;
