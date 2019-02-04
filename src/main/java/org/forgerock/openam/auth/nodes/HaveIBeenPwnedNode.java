@@ -100,17 +100,18 @@ public class HaveIBeenPwnedNode extends AbstractDecisionNode {
         String json = "";
         try {
             URL url = new URL("https://haveibeenpwned.com/api/v2/breachedaccount/" + mail);
-            debug.message("[" + DEBUG_FILE + "]: url = " + url);
+            debug.error("[" + DEBUG_FILE + "]: url = " + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.33 Safari/537.36");
+            conn.setRequestProperty("Accept", "*/*");
+            conn.setRequestProperty("content-type", "application/json");
+            conn.setRequestProperty("User-Agent", "curl/7.29.0");
             if (conn.getResponseCode() == 404) {
-                debug.message("[" + DEBUG_FILE + "]: response 404 - no breaches found");
+                debug.error("[" + DEBUG_FILE + "]: response 404 - no breaches found");
                 return false;
             }
             if (conn.getResponseCode() != 200) {
-                debug.message("[" + DEBUG_FILE + "]: HTTP failed, response code:" + conn.getResponseCode());
+                debug.error("[" + DEBUG_FILE + "]: HTTP failed, response code:" + conn.getResponseCode());
                 throw new RuntimeException("[" + DEBUG_FILE + "]: HTTP error code : " + conn.getResponseCode());
             }
 
@@ -120,6 +121,7 @@ public class HaveIBeenPwnedNode extends AbstractDecisionNode {
                 json = json + output;
             }
             conn.disconnect();
+            debug.error("[" + DEBUG_FILE + "]: response:" + json);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
