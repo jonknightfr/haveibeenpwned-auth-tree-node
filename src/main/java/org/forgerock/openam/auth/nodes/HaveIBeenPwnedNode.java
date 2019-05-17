@@ -105,7 +105,7 @@ public class HaveIBeenPwnedNode extends AbstractDecisionNode {
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "*/*");
             conn.setRequestProperty("content-type", "application/json");
-            conn.setRequestProperty("User-Agent", "curl/7.29.0");
+            conn.setRequestProperty("User-Agent", "ForgeRock");
             if (conn.getResponseCode() == 404) {
                 debug.error("[" + DEBUG_FILE + "]: response 404 - no breaches found");
                 return false;
