@@ -13,8 +13,8 @@
  *
  * Copyright 2017 ForgeRock AS.
 -->
-<b>Have I Been Pwned Authentication Node</b>
-<br/>
+#Have I Been Pwned Authentication Node
+
 A simple authentication node for ForgeRock's [Identity Platform][forgerock_platform] 5.5 and above. This node checks a user's email address against the list of known public security breaches as recorded at HaveIBeenPwned (http://haveibeenpwned.com). If the user's email address is associated with a known breach, the authentication node returns true, otherwise false.
 ## Installation
 

@@ -29,6 +29,8 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.shared.debug.Debug;
 
+import org.forgerock.json.JsonValue;
+import org.forgerock.openam.annotations.sm.Attribute;
 import org.forgerock.openam.auth.node.api.*;
 import org.forgerock.openam.core.CoreWrapper;
 
@@ -52,12 +54,26 @@ import java.net.URL;
 public class HaveIBeenPwnedNode extends AbstractDecisionNode {
 
     public interface Config {
+
+        @Attribute(order = 100)
+        default String apiKey() { return "apiKey"; }
+
+        @Attribute(order = 200)
+        default String userAgent() { return "ForgeRock"; }
+
+        @Attribute(order = 300)
+        default String mailAttr() { return "mail"; }
+
+        @Attribute(order = 400)
+        default String breaches() { return "breaches"; }
     }
+
 
     private final Config config;
     private final CoreWrapper coreWrapper;
     private final static String DEBUG_FILE = "HaveIBeenPwnedNode";
     protected Debug debug = Debug.getInstance(DEBUG_FILE);
+    private JsonValue newSharedState;
 
     /**
      * Guice constructor.
@@ -78,8 +94,10 @@ public class HaveIBeenPwnedNode extends AbstractDecisionNode {
 
         debug.message("[" + DEBUG_FILE + "]: Looking for mail attribute");
 
+        newSharedState = context.sharedState.copy();
+
         try {
-            Set<String> idAttrs = userIdentity.getAttribute("mail");
+            Set<String> idAttrs = userIdentity.getAttribute(config.mailAttr());
             if (idAttrs == null || idAttrs.isEmpty()) {
                 debug.error("[" + DEBUG_FILE + "]: " + "Unable to find mail attribute");
             } else {
@@ -92,22 +110,24 @@ public class HaveIBeenPwnedNode extends AbstractDecisionNode {
            debug.error("[" + DEBUG_FILE + "]: " + "Node exception", e);
         }
 
-        return goTo(haveIBeenPwned(attr)).build();
+        return goTo(haveIBeenPwned(attr)).replaceSharedState(newSharedState).build();
     }
 
 
     private boolean haveIBeenPwned(String mail) {
         String json = "";
         try {
-            URL url = new URL("https://haveibeenpwned.com/api/v2/breachedaccount/" + mail);
+            URL url = new URL("https://haveibeenpwned.com/api/v3/breachedaccount/" + mail);
             debug.error("[" + DEBUG_FILE + "]: url = " + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "*/*");
             conn.setRequestProperty("content-type", "application/json");
-            conn.setRequestProperty("User-Agent", "ForgeRock");
+            conn.setRequestProperty("User-Agent", config.userAgent());
+            conn.setRequestProperty("hibp-api-key", config.apiKey());
             if (conn.getResponseCode() == 404) {
                 debug.error("[" + DEBUG_FILE + "]: response 404 - no breaches found");
+                newSharedState.put(config.breaches(), "");
                 return false;
             }
             if (conn.getResponseCode() != 200) {
@@ -122,6 +142,7 @@ public class HaveIBeenPwnedNode extends AbstractDecisionNode {
             }
             conn.disconnect();
             debug.error("[" + DEBUG_FILE + "]: response:" + json);
+            newSharedState.put(config.breaches(), json);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
